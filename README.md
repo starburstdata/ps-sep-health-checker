@@ -1,1 +1,0 @@
-# ps-health-status-checker

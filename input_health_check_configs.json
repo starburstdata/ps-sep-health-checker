@@ -1,0 +1,86 @@
+{
+   "cluster_health":{
+      "hourly_cpu_metrics":{
+         "query_text":"select concat(substring(cast(sample_interval_start as varchar),1,10),'-',substring(cast(sample_interval_start as varchar),12,2)) as query_date_hour,round(approx_percentile(system_cpu_load,0.5),2) as hourly_median_sys_cpu,round(approx_percentile(process_cpu_load,0.5),2) as hourly_median_proc_cpu from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },
+      "daily_cpu_metrics":{
+         "query_text":"select substring(cast(sample_interval_start as varchar),1,10) as query_date,round(approx_percentile(system_cpu_load,0.5),2) as daily_median_sys_cpu,round(approx_percentile(process_cpu_load,0.5),2) as daily_median_proc_cpu from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },
+      "hourly_memory_metrics":{
+         "query_text":"select concat(substring(cast(sample_interval_start as varchar),1,10),'-',substring(cast(sample_interval_start as varchar),12,2)) as query_date_hour,round(approx_percentile(cast(used_query_memory as double)/cast(total_query_memory as double),0.5),2) as hourly_median_qry_memory, round(approx_percentile(cast(used_heap_size as double)/cast(total_heap_size as double),0.5),2) as hourly_median_heap_memory from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },
+      "daily_memory_metrics":{
+         "query_text":"select substring(cast(sample_interval_start as varchar),1,10) as query_date,round(approx_percentile(cast(used_query_memory as double)/cast(total_query_memory as double),0.5),2) as daily_median_qry_memory, round(approx_percentile(cast(used_heap_size as double)/cast(total_heap_size as double),0.5),2) as daily_median_heap_memory from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },       
+      "hourly_node_count":{
+         "query_text":"select concat(substring(cast(sample_interval_start as varchar),1,10),'-',substring(cast(sample_interval_start as varchar),12,2)) as query_date_hour, round(approx_percentile(nodes,0.5),1) as hourly_median_node_count, round(avg(nodes),1) as hourly_avg_node_count from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },
+      "minutely_cpu_metrics":{
+         "query_text":"select sample_interval_start as query_minute,round(approx_percentile(system_cpu_load,0.5),2) as minutely_median_sys_cpu,round(approx_percentile(process_cpu_load,0.5),2) as minutely_median_proc_cpu from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },
+      "minutely_memory_metrics":{
+         "query_text":"select sample_interval_start as query_minute,round(approx_percentile(cast(used_query_memory as double)/cast(total_query_memory as double),0.5),2) as minutely_median_qry_memory, round(approx_percentile(cast(used_heap_size as double)/cast(total_heap_size as double),0.5),2) as minutely_median_heap_memory from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      },
+      "minutely_node_count":{
+         "query_text":"select sample_interval_start as query_minute, round(approx_percentile(nodes,0.5),1) as minutely_node_count from cluster_metrics where sample_interval_start >= cast('analysis_start_date' as timestamp) and sample_interval_start < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1"
+      }
+   },
+   "queries_health":{
+      "query_trends":{
+         "query_text":"select cast(substring(cast(create_time as varchar),1,10) as timestamp) as query_date,case when query_type is null then 'NA' else query_type end as query_type, case when source is null then 'NA' else source end as query_source, count(1) as num_queries from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1,2,3 order by 1 desc"
+      },
+      "query_failure_rate":{
+         "query_text":"select substring(cast(create_time as varchar),1,10) as query_date,round(cast(count(case when query_state = 'FAILED' then 1 end) as double)/count(1),2) as query_failure_rate from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 order by 1 desc"
+      },
+      "query_failure_rate_by_query_type":{
+         "query_text":"select a.query_date, a.query_type, round(cast(a.failed_querie_cnt as double)/b.cnt,2) as query_failure_rate from ( select substring(cast(create_time as varchar),1,10) as query_date, case when query_type is null then 'NA' else query_type end as query_type,  count(case when query_state = 'FAILED' then 1 end) as failed_querie_cnt from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1,2 order by 1 desc ) a inner join  ( select  substring(cast(create_time as varchar),1,10) as query_date,count(1) as cnt from completed_queries  where date(create_time) >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1 ) b on  a.query_date=b.query_date"
+      },
+      "query_failure_by_query_type":{
+         "query_text":"select substring(cast(create_time as varchar),1,10) as query_date,case when query_type is null then 'NA' else query_type end as query_type,count(1) as failed_queries_cnt from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) and query_state = 'FAILED' group by 1,2 order by 1 desc"
+      },
+      "query_failure_by_error_type":{
+         "query_text":"select substring(cast(create_time as varchar),1,10) as query_date,replace(json_query(failure_info,'lax $.errorCode.type'),'\"','') AS error_type,replace(json_query(failure_info,'lax $.errorCode.code'),'\"','') AS error_code, replace(json_query(failure_info,'lax $.errorCode.name'),'\"','') AS error_name, count(1) as failed_queries_cnt from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) and query_state = 'FAILED' group by 1,2,3,4 order by 1 desc"
+      },
+      "query_failure_by_error_type_and_name":{
+         "query_text":"select substring(cast(create_time as varchar),1,10) as query_date,case when query_type is null then 'NA' else query_type end as query_type,replace(json_query(failure_info,'lax $.errorCode.type'),'\"','') as error_type, concat(replace(json_query(failure_info,'lax $.errorCode.code'),'\"',''),'-',replace(json_query(failure_info,'lax $.errorCode.name'),'\"','')) AS error_code_name, count(1) as failed_queries_cnt from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) and query_state = 'FAILED' group by 1,2,3,4 order by 1 desc"
+      },
+      "queries_per_minute":{
+         "query_text":"select case when query_type is null then 'NA' else query_type end as query_type, substring(cast(create_time as varchar),1,10) as query_date, substring(cast(create_time as varchar),12,5) as query_minute, count(1) as num_queries from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1,2,3 order by 2,3"
+      },
+      "data_processed":{
+         "query_text":"select substring(cast(create_time as varchar),1,10) as query_date, query_type, round(avg(total_rows),2) as avg_total_rows, round(avg(total_bytes),2) as avg_total_bytes, round(avg(output_rows),2) as avg_output_rows, round(avg(output_bytes),2) as avg_output_bytes, round(avg(physical_input_bytes),2) as avg_physical_input_bytes, round(avg(physical_input_rows),2) as avg_physical_input_rows, round(avg(completed_splits),2) as avg_completed_splits from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) group by 1,2 order by 1"
+      },
+      "query_perf_and_time_metrics":{
+         "query_text":"select  substring(cast(create_time as varchar),1,10) as query_date, query_type, round(avg(cpu_time_ms/1000),2) as avg_cpu_time_secs, round(avg(wall_time_ms/1000),2) as avg_wall_time_secs, round(avg(queued_time_ms/1000),2) as avg_queued_time_secs, round(avg(resource_waiting_time/1000),2) as avg_resource_waiting_time_secs, round(avg(analysis_time/1000),2) as avg_analysis_time_secs, round(avg(execution_time/1000),2) as avg_execution_time_secs, round(avg(planning_time/1000),2) as avg_planning_time_secs, round(avg(scheduled_time/1000),2) as avg_scheduled_time_secs from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp)  group by 1,2 order by 1 desc"
+      }
+   },
+   "top_x_queries":{
+      "top_x_execution_time":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, execution_time, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY execution_time DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(execution_time,2) as execution_time from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, round(execution_time/1000,2) as value FROM RankedQueries WHERE rn <= 10"
+      },
+      "top_x_planning_time":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, planning_time, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY planning_time DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(planning_time,2) as planning_time from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, round(planning_time/1000,2) as value FROM RankedQueries WHERE rn <= 10"
+      },
+      "top_x_queued_time":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, queued_time, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY queued_time DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(queued_time_ms,2) as queued_time from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, round(queued_time/1000,2) as value FROM RankedQueries WHERE rn <= 10"
+      },      
+      "top_x_scheduled_time":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, scheduled_time, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY scheduled_time DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(scheduled_time,2) as scheduled_time from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, round(scheduled_time/1000,2) as value FROM RankedQueries WHERE rn <= 10"
+      },
+      "top_x_analysis_time":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, analysis_time, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY analysis_time DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(analysis_time,2) as analysis_time from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, round(analysis_time/1000,2) as value FROM RankedQueries WHERE rn <= 10"
+      },
+      "top_x_cpu_time":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, cpu_time_ms, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY cpu_time_ms DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(cpu_time_ms,2) as cpu_time_ms from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, round(cpu_time_ms/1000,2) as value FROM RankedQueries WHERE rn <= 10"
+      },      
+      "top_x_data_scanned":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, data_scanned , ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY data_scanned DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(cast(physical_input_bytes as double)/1024/1024/1024,2) as data_scanned from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, data_scanned as value FROM RankedQueries WHERE rn <= 10"
+      },
+      "top_x_splits_completed":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, completed_splits, ROW_NUMBER() OVER (PARTITION BY query_date, query_type ORDER BY completed_splits DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, round(completed_splits,2) as completed_splits from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) ) a ) SELECT query_id, usr, query, query_type, query_date, completed_splits as value FROM RankedQueries WHERE rn <= 10"
+      },
+      "sample_errors":{
+         "query_text":"WITH RankedQueries AS ( SELECT query_id, usr, query_type, query_date, query, error_type, error_code_name, ROW_NUMBER() OVER (PARTITION BY query_date, query_type, error_type, error_code_name ORDER BY 1 DESC) AS rn FROM ( select substring(cast(create_time as varchar),1,10) as query_date, usr,query, case when query_type is null then 'NA' else query_type end as query_type, query_id, replace(json_query(failure_info,'lax $.errorCode.type'),'\"','') as error_type, concat(replace(json_query(failure_info,'lax $.errorCode.code'),'\"',''),'-',replace(json_query(failure_info,'lax $.errorCode.name'),'\"','')) AS error_code_name from completed_queries where create_time >= cast('analysis_start_date' as timestamp) and create_time < cast(date_add('day',1,cast('analysis_end_date' as date)) as timestamp) and query_state='FAILED') a ) SELECT query_id, usr, query, query_type, query_date, error_type, error_code_name FROM RankedQueries WHERE rn <= 10"
+      }
+   }
+}

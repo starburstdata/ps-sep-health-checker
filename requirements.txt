@@ -1,0 +1,9 @@
+### Tested on Python 3.10.9
+argparse==1.4.0
+dash==2.13.0
+datetime==4.3
+matplotlib==3.4.2
+numpy==1.23.5
+plotly==5.1.0
+trino==0.326.0
+pandas==1.5.3
