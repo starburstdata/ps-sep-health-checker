@@ -4,6 +4,7 @@ After the notebook "HealthCheckerTool_v1_20Oct23.ipynb" is imported into jupyter
 
 Prerequisites:
    - Use Python3 or above
+        * *Note*: *Tested in 3.10.9*
    - The insights DB should be added as a catalog in starburst
    - Various python modules used are specified below
 
@@ -22,7 +23,9 @@ Here's a description of the different sections in the notebook
     
 - Main Code - This cell has the code that iterates over the KPIs in the input json and executes the queries in starburst. Some important aspects of this cell are:
     - The code uses the trino python client and makes the connection using dbapi
-    - Key python modules needed are trino,csv,json,argparse,getpass,logging,datetime,pandas,matplotlib,numpy,dash,       plotly 
+    - Key python modules needed are trino,csv,json,argparse,getpass,logging,datetime,pandas,matplotlib,numpy,dash,plotly 
+        * Optional: you can use the requirements.txt to install the required modules using pip
+            * `pip install -U -r ./requirements.txt`
     
 - Cluster Health - Section that captures the following KPIs:
     - minutely cpu/memory usage over time (avg/median)
