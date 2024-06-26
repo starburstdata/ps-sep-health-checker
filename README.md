@@ -1,6 +1,6 @@
 # Health Checker Tool
 
-After the notebook "HealthCheckerTool_v1_20Oct23.ipynb" is imported into jupyter, execute the cells in order.
+After the notebook "health_status_checker.ipynb" is imported into jupyter, execute the cells in order.
 
 Prerequisites:
    - Use Python3 or above
@@ -14,7 +14,7 @@ Here's a description of the different sections in the notebook
     - input_file: File "input_health_check_configs.json" that contain predefined KPIs and corresponding queries.
     - hostname: Starburst host url
     - port: port
-    - role: role to assume (The role must have select access on the given catalog/schema tables
+    - role: role to assume when using biac (The role must have select access on the given catalog/schema tables
     - username: input connection user (masked)
     - password: input connection user pasword (masked)
     - catalog: The catalog that exposes the insights db
@@ -28,35 +28,30 @@ Here's a description of the different sections in the notebook
             * `pip install -U -r ./requirements.txt`
     
 - Cluster Health - Section that captures the following KPIs:
-    - minutely cpu/memory usage over time (avg/median)
-    - minutely query counts over time (avg/median)
-    - minutely node availability over time
-    
+    - Daily CPU Usage (avg/median)
+    - Hourly CPU Usage (avg/median)
+    - Daily Memory Usage (avg/median)
+    - Hourly Memory Usage (avg/median)
+    - Hourly Node Count (avg/median)
+    - Minutely CPU Usage (avg/median)
+    - Minutely Memory Usage (avg/median)
+    - Minutely Node Count (avg/median)
+
 - Query Health - Section that captures the following KPIs:
-    - Query trends over time / by query type
-    - failure rates over time / by query type
-    - failure counts over time / by query type
-    - failure counts over time / by query type / by error type
-    - failure counts over time / by query type / by error type / by error code-name
+    - Query Trends By Query Type
+    - Query Failure Rate By Query Type
+    - Failed Queries Count By Query Type
+    - Failed Queries Count By Error Type
+    - Failed Queries Count by Error Name
+    - Concurrency - Queries Per Minute
+    - Data Processed Over Time
+    - Query Performance And Time Metrics
     
-- Drill Down On Errors
-    - Drill down into failed queries using various filters
-    
-- Concurrency
-    - Queries per minute over time, represented by size of bubbles in the chart
-    
-- Data Processed Over Time
-    - Avg input / output rows/bytes
-    - Splits processed
-    
-- Query Performance Over Time
-    - Various time metrics like CPU time, execution time, wait time, wall time, queued time, analysis time, planning, time, scheduled time input / output rows/bytes
-    
-- Top X Queries (X is set to 10 currently) - Drill down on queries which could possibly be bottlenecks
+- Top X Queries Analysis(X is set to 10 currently) - Drill down on queries which could possibly be bottlenecks
     - Top X Queries based on Execution Time is secs
     - Top X Queries based on Planning Time is secs
     - Top X Queries based on Scheduled Time is secs
     - Top X Queries based on CPU Time is secs
     - Top X Queries based on Analysis Time is secs
     - Top X Queries based on Data Scanned in GBs
-    - Top X Queries based on #Splits Processed
+    - Top X Queries based on Splits Processed
