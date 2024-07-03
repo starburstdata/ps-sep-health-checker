@@ -1,14 +1,25 @@
 # Health Checker Tool
 
-After the notebook "health_status_checker.ipynb" is imported into jupyter, execute the cells in order.
-
-Prerequisites:
+# Prerequisites:
    - Use Python3 or above
         * *Note*: *Tested in 3.10.9*
    - The insights DB should be added as a catalog in starburst
    - Various python modules used are specified below
 
-Here's a description of the different sections in the notebook
+# Steps to Launch the tool:
+   - Clone the repo "git clone https://github.com/starburstdata/ps-health-status-checker"
+
+   - Go inside the project folder "cd ./ps-health-status-checker"
+
+   - Start a Jupyter session on your browser at with command "jupyter notebook"
+
+   - This should launch a jupyter session on http://localhost:8888/
+
+   - Open (Import) teh botebook "health_status_checker.ipynb" into jupyter, and execute the cells in order.
+
+# Detailed Description
+
+Here's a description of the different sections used in the notebook
 
 - Input parameters - This cell accepts the following inputs to run the tool:
     - input_file: File "input_health_check_configs.json" that contain predefined KPIs and corresponding queries.
