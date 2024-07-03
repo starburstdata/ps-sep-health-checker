@@ -1,4 +1,6 @@
-# Health Checker Tool
+# Health Status Checker
+
+# THIS TOOL IS NOT OFFICIALLY SUPPORTED BY STARBURST DATA.  IT WAS CREATED BY OUR PROFESSIONAL SERVICES TEAM TO AID WITH SPECIFIC USE CASES.
 
 # Prerequisites:
    - Use Python3 or above
