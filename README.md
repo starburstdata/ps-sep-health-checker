@@ -32,7 +32,7 @@
    - Open (Import) the notebook `health_status_checker.ipynb` into jupyter, and execute the cells in order.
 
 # Execution
-Before you can Notebook code you need to provide input parameters. Those allow you to connect the tool to [Backend Service DB](https://docs.starburst.io/latest/admin/backend-service.html) of the SEP cluster you want to analyze and specify timeframe for analysis. For detailed explanation of the parameters refer to [Input parameters]() paragraph.
+Before you can Notebook code you need to provide input parameters. Those allow you to connect the tool to [Backend Service DB](https://docs.starburst.io/latest/admin/backend-service.html) of the SEP cluster you want to analyze and specify timeframe for analysis. For detailed explanation of the parameters refer to [Input parameters](https://github.com/starburstdata/ps-health-status-checker/tree/main?tab=readme-ov-file#input-parameters) paragraph.
 
 # Detailed Description
 
