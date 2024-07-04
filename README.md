@@ -39,7 +39,7 @@ Before you can Notebook code you need to provide input parameters. Those allow y
 Description of the different sections used in the notebook
 
 ## Input parameters
-This cell accepts the following inputs to run the tool:
+To run this cell requires the following parameters to be provided:
 - `input_file`: File `input_health_check_configs.json` that contain predefined KPIs and corresponding queries.
 - `hostname`: Starburst Enteprise Platform (SEP) hostname
 - `port`: SEP port
