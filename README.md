@@ -1,4 +1,4 @@
-# Health Status Checker
+# SEP Health Checker
 
 # THIS TOOL IS NOT OFFICIALLY SUPPORTED BY STARBURST DATA.  IT WAS CREATED BY OUR PROFESSIONAL SERVICES TEAM TO AID WITH SPECIFIC USE CASES.
 
@@ -8,15 +8,15 @@
    - Installed Jupyter Notebooks
         * Use `pip` and `pip3` to install on MacOS. Example: `pip3 install jupyter`
    - A catalog in Starburst Enterprise Platform (SEP) is connected to [Backend Service DB](https://docs.starburst.io/latest/admin/backend-service.html)
-   - Installed Python modules specified in [requirements.txt](https://github.com/starburstdata/ps-health-status-checker/blob/main/requirements.txt).
+   - Installed Python modules specified in [requirements.txt](https://github.com/starburstdata/ps-sep-health-checker/blob/main/requirements.txt).
         * Use `pip` and `pip3` to install on MacOS. Example: `pip install -U -r ./requirements.txt`
 
 # Installation
    - Clone the repo:
-   `git clone https://github.com/starburstdata/ps-health-status-checker`
+   `git clone https://github.com/starburstdata/ps-sep-health-checker`
 
    - Go inside the project folder:
-   `cd ./ps-health-status-checker`
+   `cd ./ps-sep-health-checker`
 
    - Install Python modules application uses:
    `pip install -U -r ./requirements.txt`
@@ -29,10 +29,10 @@
 
    - This should launch a jupyter session on `http://localhost:8888/`
 
-   - Open (Import) the notebook `health_status_checker.ipynb` into jupyter, and execute the cells in order.
+   - Open (Import) the notebook `ps_sep_health_checker.ipynb` into jupyter, and execute the cells in order.
 
 # Execution
-Before you can Notebook code you need to provide input parameters. Those allow you to connect the tool to [Backend Service DB](https://docs.starburst.io/latest/admin/backend-service.html) of the SEP cluster you want to analyze and specify timeframe for analysis. For detailed explanation of the parameters refer to [Input parameters](https://github.com/starburstdata/ps-health-status-checker/tree/main?tab=readme-ov-file#input-parameters) paragraph.
+Before you can Notebook code you need to provide input parameters. Those allow you to connect the tool to [Backend Service DB](https://docs.starburst.io/latest/admin/backend-service.html) of the SEP cluster you want to analyze and specify timeframe for analysis. For detailed explanation of the parameters refer to [Input parameters](https://github.com/starburstdata/ps-sep-health-checker/tree/main?tab=readme-ov-file#input-parameters) paragraph.
 
 # Detailed Description
 
